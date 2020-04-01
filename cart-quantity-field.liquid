@@ -1,0 +1,38 @@
+<div class="cart_product_title cart_product_column cart_product_col_no3">
+  {% if item.variant.inventory_management == 'shopify' %}{% if item.variant.inventory_quantity > 0 %}
+  <div class="product_quantity">
+     <div class="dec button cart_minus fm">-</div>
+     <input type="text" name="updates[]" id="updates_{{ item.id }}" data-line="{{ forloop.index }}" value="{{ item.quantity }}" min="1" max="{{ item.variant.inventory_quantity }}" pattern="[0-9]*" class="color1 fm qty">
+     <div class="inc button cart_plus fm">+</div>
+  </div>
+  {% endif %}{% endif %}
+</div>
+
+<script>
+  $(".button").on("click", function() {
+    var oldValue = $(this).parents(".product_quantity").find("input").val(),
+        newVal = 1;
+    if ($(this).text() == "+") {
+      newVal = parseInt(oldValue) + 1;
+    } else if (oldValue > 1) {
+      newVal = parseInt(oldValue) - 1;
+    }
+    $(this).parents(".product_quantity").find("input").val(newVal);
+    
+    var templine = $(this).parents(".product_quantity").find("input").data('line');
+    var tempqt = $(this).parents(".product_quantity").find("input").val();
+    var params = {
+      type: 'POST',
+      url: '/cart/change.js',
+      data: 'quantity='+tempqt+'&line='+templine,
+      dataType: 'json',
+      success: function(data) {
+        location.reload();
+      },
+      error: function(data) {
+        alert("Ajax Error")
+      }
+    };
+    $.ajax(params);
+  });
+</script>
